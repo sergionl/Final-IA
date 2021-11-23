@@ -1,5 +1,5 @@
 import numpy as np
-
+import random
 def cartas():
     cartasCulpable=['Mora','Blanco','Amapola','Prado','Rubio','Celeste']
     cartasLugar=['Patio','Estudio','Comedor','Garaje','Salon','Dormitorio']
@@ -20,6 +20,7 @@ def changeValue(kb,cardType,card,info):
         kb.itemset((cardType,card),1)
     else:
         kb.itemset((cardType,card),0)
+    return kb
 
 def seeSecurity(kb,cardType):
     count0 = 0
@@ -99,3 +100,37 @@ def nameToNumber(name):
 def helpSecurity(kb):
     for i in range(3):
         seeSecurity(kb,i)
+
+def selectedCartasGanador(cartas):
+    carta1=random.randint(0,5)
+    carta2=random.randint(0,5)
+    carta3=random.randint(0,5)
+    print(carta1,carta2,carta3)
+    return [carta1,carta2,carta3]
+
+def selectCartasJugador(cartas,ganador,otrojugador,kb):
+    while True:
+        carta1= random.randint(0,5)
+        if carta1== ganador[0]:
+            continue
+        if carta1==otrojugador[0]:
+            continue
+        kb=changeValue(kb,0,carta1,False)
+        break
+    while True:
+        carta2= random.randint(0,5)
+        if carta2== ganador[1]:
+            continue
+        if carta2==otrojugador[1]:
+            continue
+        kb=changeValue(kb,1,carta2,False)
+        break
+    while True:
+        carta3= random.randint(0,5)
+        if carta3== ganador[2]:
+            continue
+        if carta3==otrojugador[2]:
+            continue
+        kb=changeValue(kb,2,carta3,False)
+        break
+    return [carta1, carta2, carta3], kb
