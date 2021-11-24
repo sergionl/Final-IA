@@ -2,6 +2,9 @@ from typing import AsyncIterable
 import numpy as np
 import random
 def cartas():
+    """
+    Define las cartas del juego y las guarda en una matriz de 6x3.
+    """
     cartasCulpable=['Mora','Blanco','Amapola','Prado','Rubio','Celeste']
     cartasLugar=['Patio','Estudio','Comedor','Garaje','Salon','Dormitorio']
     cartasMotivo=['Racismo','Homofobia','Transfobia','Xenofobia','Sexismo','Discriminacion por discapacidad']
@@ -10,12 +13,25 @@ def cartas():
     return cartas
 
 def createKb():
+    """
+    Se crea una base de conocimiento, esta tiene forma de una matriz de 3x6, ya que esa son la cantidad de cartas en el juego.
+
+    La base de conocimiento tiene datos iniciales en -1, ya que este representa falta de informacion.
+    """
     kb = np.zeros((3,6))
     for i in range(18):
         kb.itemset(i,-1)
     return kb
 
 def changeValue(kb, card, info):
+    """
+    Cambia los valores a la base de conocimiento.
+
+    0 representa que esa carta no es la respuesta.
+
+    1 representa que esa carta es parte de la respuesta.
+    """
+
     if info:
         kb.itemset(card, 1)
     else:
@@ -23,6 +39,17 @@ def changeValue(kb, card, info):
     return kb
 
 def seeSecurity(kb,cardType,cartas):
+    """
+    Muestra si nuestra base de conocimiento tiene certeza sobre algun tipo de cartas.
+    Se basa en la regla solo una carta de cada tipo es la respuesta correcta, esto se puede entender como:
+
+    -Solo existe una carta de culpables es el culpable:  ∃x. (CartaCulpable(x) ∧ ¬Culpable(x))
+
+    -Solo existe una carta de lugares es el lugar:  ∃x. (CartaLugar(x) ∧ ¬Lugar(x))
+
+    -Solo existe una carta de motivos es el motivo:  ∃x. (CartaMotivo(x) ∧ ¬Motivo(x))
+    
+    """
     count0 = 0
     for i in range(6):
         if kb[cardType,i] == 0:
@@ -46,6 +73,10 @@ def seeSecurity(kb,cardType,cartas):
     return kb,mensaje
 
 def nameToNumber(name):
+    """
+    Recive la carta seleccionada por el usuario y devuelve 
+    la posicion de la matriz que representa esa carta.
+    """
     name = name.lower()
     cardType,card = -1,-1
     if name == "mora":
@@ -106,6 +137,11 @@ def nameToNumber(name):
         return -1,-1
 
 def helpSecurity(kb,cartas):
+    """
+    Función auxiliar
+
+    LLama 3 veces a la función seeSecurity para revisar si se tiene certeza de algun tipo de cartas
+    """
     mensajes=""
     for i in range(3):
         kb,aux = seeSecurity(kb,i,cartas)
@@ -113,12 +149,19 @@ def helpSecurity(kb,cartas):
     return kb, mensajes
 
 def selectedCartasGanador():
+    """
+    Selecciona aleatoriamente las cartas del ganador
+    """
     number1=random.randint(0,5)
     number2=random.randint(0,5)
     number3=random.randint(0,5)
     return [(0, number1), (1, number2), (2, number3)]
 
 def selectCartasIniciales(ganador, otrojugador, kb):
+    """
+    Para iniciar el juego se reparte cartas, la funcion se encarga de seleccionar cartas aleatoriamente a 
+    los jugadores y seleccionar aleatoriamente las cartas ganadore(culpable, motivo y lugar)
+    """
     selected = []
     
     for i in range(3):
@@ -139,6 +182,9 @@ def selectCartasIniciales(ganador, otrojugador, kb):
     return selected, kb
 
 def selectCarta(availablecards):
+    """
+    Selecciona la carta que solicita
+    """
     ans = (-1, -1)
     if len(availablecards) == 0:
         return ans
@@ -146,6 +192,9 @@ def selectCarta(availablecards):
     return random.choice(availablecards)
 
 def initial_available_cards():
+    """
+    Se crea la lista inicial de cartas
+    """
     lista = list()
     for i in range(3):
         for j in range(5):
@@ -154,6 +203,9 @@ def initial_available_cards():
     return lista
 
 def quit_some_availablecards(available: list, group: list):
+    """
+    Quita la carta que el jugador robo en su turno de la lista de cartas que aun no roba
+    """
     for element in group:
         if element in available:
             available.remove(element)
@@ -161,6 +213,10 @@ def quit_some_availablecards(available: list, group: list):
     return available
 
 def question(kb,cardType,card,otroJugador):
+    """
+    Revisa si el jugador y tiene la respuesta a la pregunta de jugador x, y llama a la funcion changeValue
+
+    """
     
     if (cardType,card) in otroJugador:
         mensaje="Base de conocimiento actualizada"
@@ -170,6 +226,13 @@ def question(kb,cardType,card,otroJugador):
     return kb,mensaje
 
 def verification(numeroPersona,numeroMotivo,numeroLugar,cartasganadoras):
+    """
+    Revisa si la acusacion de un jugador es correcta.
+
+    Esta solo es correcta si el jguador acierta el culpable, el motivo y el lugar.
+
+    ∀x. (Culpable(x) ∧ Lugar(y) ∧ Motivo (z) →RespuestaCorrecta(x,y,z))
+    """
     if numeroPersona not in cartasganadoras:
         mensaje="Perdiste"
         return mensaje
