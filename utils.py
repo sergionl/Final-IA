@@ -29,12 +29,13 @@ def seeSecurity(kb,cardType):
             count0 +=1
         if kb[cardType,i] == 1:
             print("Carta {0} es parte de la respuesta".format(cartas[cardType][i]))
-            return
+            return kb
     if count0 == 5:
         for i in range(6):
             if kb[cardType,i] == -1:
                 print("Carta {0} es parte de la respuesta".format(cartas[cardType][i]))
-                return
+                kb = changeValue(kb,cardType,i,True)
+                return kb
     print("La base de conocimiento no tiene informacion suficiente")
 
 def nameToNumber(name):
@@ -99,7 +100,8 @@ def nameToNumber(name):
 
 def helpSecurity(kb):
     for i in range(3):
-        seeSecurity(kb,i)
+        kb = seeSecurity(kb,i)
+    return kb
 
 def selectedCartasGanador(cartas):
     carta1=random.randint(0,5)
@@ -134,3 +136,10 @@ def selectCartasJugador(cartas,ganador,otrojugador,kb):
         kb=changeValue(kb,2,carta3,False)
         break
     return [carta1, carta2, carta3], kb
+
+def question(kb,cardType,card,otroJugador):
+    if otroJugador[cardType] == card:
+        kb = changeValue(kb,cardType,card,False)
+    else:
+        print("No se obtiene respuesta")
+    return kb
