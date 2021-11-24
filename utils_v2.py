@@ -23,20 +23,28 @@ def changeValue(kb, card, info):
         kb.itemset(card, 0)
     return kb
 
-def seeSecurity(kb,cardType):
+def seeSecurity(kb,cardType,cartas):
     count0 = 0
     for i in range(6):
         if kb[cardType,i] == 0:
             count0 +=1
         if kb[cardType,i] == 1:
-            print("Carta {0} es parte de la respuesta".format(cartas[cardType][i]))
-            return
+            mensaje="Carta {0} es parte de la respuesta".format(cartas[cardType][i])
+            return kb,mensaje
     if count0 == 5:
         for i in range(6):
             if kb[cardType,i] == -1:
-                print("Carta {0} es parte de la respuesta".format(cartas[cardType][i]))
-                return
-    print("La base de conocimiento no tiene informacion suficiente")
+                kb = changeValue(kb,(cardType,i),True)
+                mensaje="Carta {0} es parte de la respuesta".format(cartas[cardType][i])
+                return kb,mensaje
+    mensaje="La base de conocimiento no tiene informacion suficiente sobre "
+    if cardType==0:
+        mensaje+="Los culpables"
+    elif cardType==1:
+        mensaje+="El lugar"
+    else:
+        mensaje+="El motivo" 
+    return kb,mensaje
 
 def nameToNumber(name):
     name = name.lower()
@@ -60,47 +68,51 @@ def nameToNumber(name):
         cardType,card = 0,5
         return cardType,card
     elif name == "racismo":
-        cardType,card = 1,0
-        return cardType,card
-    elif name == "homofobia":
-        cardType,card = 1,1
-        return cardType,card
-    elif name == "transfobia":
-        cardType,card = 1,2
-        return cardType,card
-    elif name == "xenofobia":
-        cardType,card = 1,3
-        return cardType,card
-    elif name == "sexismo":
-        cardType,card = 1,4
-        return cardType,card
-    elif name == "discriminacion por discapacidad":
-        cardType,card = 1,5
-        return cardType,card
-    elif name == "patio":
         cardType,card = 2,0
         return cardType,card
-    elif name == "estudio":
+    elif name == "homofobia":
         cardType,card = 2,1
         return cardType,card
-    elif name == "comedor":
+    elif name == "transfobia":
         cardType,card = 2,2
         return cardType,card
-    elif name == "garaje":
+    elif name == "xenofobia":
         cardType,card = 2,3
         return cardType,card
-    elif name == "salon":
+    elif name == "sexismo":
         cardType,card = 2,4
         return cardType,card
-    elif name == "dormitorio":
+    elif name == "discriminacion por discapacidad":
         cardType,card = 2,5
         return cardType,card
+    elif name == "patio":
+        cardType,card = 1,0
+        return cardType,card
+    elif name == "estudio":
+        cardType,card = 1,1
+        return cardType,card
+    elif name == "comedor":
+        cardType,card = 1,2
+        return cardType,card
+    elif name == "garaje":
+        cardType,card = 1,3
+        return cardType,card
+    elif name == "salon":
+        cardType,card = 1,4
+        return cardType,card
+    elif name == "dormitorio":
+        cardType,card = 1,5
+        return cardType,card
     else:
-        print("Ingrese una carta existente")
+        #print("Ingrese una carta existente")
+        return -1,-1
 
-def helpSecurity(kb):
+def helpSecurity(kb,cartas):
+    mensajes=""
     for i in range(3):
-        seeSecurity(kb,i)
+        kb,aux = seeSecurity(kb,i,cartas)
+        mensajes+=aux+"\n"
+    return kb, mensajes
 
 def selectedCartasGanador():
     number1=random.randint(0,5)
@@ -124,6 +136,8 @@ def selectCartasIniciales(ganador, otrojugador, kb):
             card = (i, number)
             selected.append(card)
             kb=changeValue(kb, card, False)
+            print(kb)
+            print(number)
             break
 
     return selected, kb
@@ -149,3 +163,11 @@ def quit_some_availablecards(available: list, group: list):
             available.remove(element)
     
     return available
+
+def question(kb,cardType,card,otroJugador):
+    
+    if (cardType,card) in otroJugador:
+        kb = changeValue(kb,(cardType,card),False)
+    else:
+        print("No se obtiene respuesta")
+    return kb
