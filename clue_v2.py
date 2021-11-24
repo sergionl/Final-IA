@@ -23,12 +23,14 @@ class Player():
         self.show = Checkbutton(self.window, text="Mostrar cartas", variable=self.checked, command=self.showcards)
         self.buttonknowledge= Button(self.window, text="Mostrar conocimiento",command= self.showknowledge)
         self.buttonpick = Button(self.window, text="Tomar una carta",command= self.pickCard)
+        self.buttonAcusar=Button(self.window,text="Acusar",command= self.acusar)
         self.fcards = LabelFrame()
 
         self.entry.pack()
         self.show.pack()
         self.buttonknowledge.pack()
         self.buttonpick.pack()
+        self.buttonAcusar.pack()
     
     def selectInitialCards(self, AnotherPlayerCards, i):
         self.cards, kbs[i] = selectCartasIniciales(wcards, AnotherPlayerCards, kbs[i])
@@ -40,7 +42,7 @@ class Player():
         return
         
     def showcards(self):
-        print(self.checked.get())
+        
         if(self.checked.get() == 1):
             self.fcards.pack_forget()
             self.canshow = False
@@ -59,29 +61,77 @@ class Player():
             messagebox.showerror("Error","No hay mas cartas")
             return
         card = selectCarta(available_cards)
-        print(available_cards)
+        
         self.cards.append(card)
         available_cards = quit_some_availablecards(available_cards, [card])
         self.showcards()
+      
+        self.buttonpick['state'] = DISABLED
 
-        print('state: ', self.buttonpick['state'])        
-        #self.buttonpick['state'] = DISABLED
-
+    def acusar(self):
+        global new_img
+        ventanaAcusar=Toplevel()
+        ventanaAcusar.title("Acusar")
+        ventanaAcusar.geometry("300x400")
+        Label(ventanaAcusar,text="Acusar "+str(self.i+1)).pack()
+        
+        canva = Canvas(ventanaAcusar, width=150, height=200)
+        canva.pack()
+        my_img = (Image.open("./img/acusar.jpg"))
+        resized_img = my_img.resize((150, 200), Image.ANTIALIAS)
+        new_img = ImageTk.PhotoImage(resized_img)
+        canva.create_image(10, 10, anchor=NW, image=new_img)
+        
+        Label(ventanaAcusar,text="Persona: ").pack()
+        entryPersona=Entry(ventanaAcusar)
+        entryPersona.pack()
+        
+        Label(ventanaAcusar,text="Lugar: ").pack()
+        entryLugar=Entry(ventanaAcusar)
+        entryLugar.pack()
+        
+        Label(ventanaAcusar,text="Motivo: ").pack()
+        entryMotivo=Entry(ventanaAcusar)
+        entryMotivo.pack()
+        
+        def acusacion():
+            numeroPersona=nameToNumber(entryPersona.get())
+            numeroMotivo=nameToNumber(entryMotivo.get())
+            numeroLugar=nameToNumber(entryLugar.get())
+            if numeroPersona == (-1,-1):
+                messagebox.showwarning("Error","No existe esta persona")
+                return
+            if numeroMotivo == (-1,-1):
+                messagebox.showwarning("Error","No hemos tomado en cuenta este motivo para el juego")
+                return
+            if numeroLugar == (-1,-1):
+                messagebox.showwarning("Error","No existe este lugar")
+                return
+            mensaje=verification(numeroPersona,numeroLugar,numeroMotivo,wcards)
+            
+            messagebox.showinfo("anuncio",mensaje)
+            if mensaje== "Ganaste":
+                root.destroy()
+            return
+        Button(ventanaAcusar, text="Enviar",command=acusacion).pack()
+        Button(ventanaAcusar, text="Retroceder",command=ventanaAcusar.destroy).pack()
+        
+        return
+    
 def play(pregunta:Player,respuesta:Player,i):
     texto=pregunta.entry.get()
     numero=nameToNumber(texto)
     if numero == (-1,-1):
         messagebox.showwarning("Error","Debes ingresar una carta correcta")
         return
-    kbs[i]=question(kbs[i],numero[0],numero[1],respuesta.cards)
+    kbs[i],mensaje=question(kbs[i],numero[0],numero[1],respuesta.cards)
+    messagebox.showinfo("Base de conocimiento",mensaje)
     pregunta.button['state'] = DISABLED        
-    print(kbs[i],numero)
     return 
 def showAnotherplayer(window1: Toplevel, window2: Toplevel, player: Player):
-    #window1.withdraw()
-    #window2.deiconify()
-
-    print('state: ', player.buttonpick['state'])        
+    window1.withdraw()
+    window2.deiconify()
+       
     player.buttonpick['state'] = NORMAL
     player.button['state'] = NORMAL
 
@@ -93,16 +143,14 @@ def start():
     
     player0.selectInitialCards(player1.cards, 0)
     player1.selectInitialCards(player0.cards, 1)
-    print(kbs[0])
-    print(kbs[1])
     Button(player0.window, text="Enviar", command= lambda:play(player0,player1,0)).pack()
     Button(player0.window, text="El siguiente jugador", 
     command=lambda: showAnotherplayer(player0.window, player1.window, player0)).pack()
     Button(player1.window, text="Enviar", command= lambda:play(player1,player0,1)).pack()
     Button(player1.window, text="El siguiente jugador", 
     command=lambda: showAnotherplayer(player1.window, player0.window, player1)).pack()
-    print(wcards)
-    #player1.window.withdraw()
+
+    player1.window.withdraw()
     available_cards = quit_some_availablecards(available_cards, player0.cards)
     available_cards = quit_some_availablecards(available_cards, player1.cards)
     available_cards = quit_some_availablecards(available_cards, wcards)

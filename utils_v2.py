@@ -13,7 +13,6 @@ def createKb():
     kb = np.zeros((3,6))
     for i in range(18):
         kb.itemset(i,-1)
-    #print(kb)
     return kb
 
 def changeValue(kb, card, info):
@@ -104,7 +103,6 @@ def nameToNumber(name):
         cardType,card = 1,5
         return cardType,card
     else:
-        #print("Ingrese una carta existente")
         return -1,-1
 
 def helpSecurity(kb,cartas):
@@ -118,7 +116,6 @@ def selectedCartasGanador():
     number1=random.randint(0,5)
     number2=random.randint(0,5)
     number3=random.randint(0,5)
-    print(number1,number2,number3)
     return [(0, number1), (1, number2), (2, number3)]
 
 def selectCartasIniciales(ganador, otrojugador, kb):
@@ -136,8 +133,7 @@ def selectCartasIniciales(ganador, otrojugador, kb):
             card = (i, number)
             selected.append(card)
             kb=changeValue(kb, card, False)
-            print(kb)
-            print(number)
+
             break
 
     return selected, kb
@@ -167,7 +163,22 @@ def quit_some_availablecards(available: list, group: list):
 def question(kb,cardType,card,otroJugador):
     
     if (cardType,card) in otroJugador:
+        mensaje="Base de conocimiento actualizada"
         kb = changeValue(kb,(cardType,card),False)
     else:
-        print("No se obtiene respuesta")
-    return kb
+        mensaje="No se obtiene respuesta"
+    return kb,mensaje
+
+def verification(numeroPersona,numeroMotivo,numeroLugar,cartasganadoras):
+    if numeroPersona not in cartasganadoras:
+        mensaje="Perdiste"
+        return mensaje
+    if numeroMotivo not in cartasganadoras:
+        mensaje="Perdiste"
+        return mensaje
+    if numeroLugar not in cartasganadoras:
+        mensaje="Perdiste"
+        return mensaje
+    mensaje="Ganaste"
+    return mensaje
+    
