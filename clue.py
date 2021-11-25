@@ -175,6 +175,7 @@ def nextPlayer(i):
     
         
 def noticia(i):
+    global img_noticia
     titulo=noticias[i][0]
     img=noticias[i][1]
     descripcion=noticias[i][2]
@@ -185,13 +186,12 @@ def noticia(i):
     ventananoticia.geometry("600x500")
     Label(ventananoticia,text=titulo).pack()
     
-    global new_img
     canva = Canvas(ventananoticia, width=400, height=200)
     canva.pack()
     my_img = (Image.open(img))
     resized_img = my_img.resize((400, 200), Image.ANTIALIAS)
-    new_img = ImageTk.PhotoImage(resized_img)
-    canva.create_image(10, 10, anchor=NW, image=new_img)
+    img_noticia = ImageTk.PhotoImage(resized_img)
+    canva.create_image(10, 10, anchor=NW, image=img_noticia)
     
     Label(ventananoticia,text=descripcion).pack()
     def callback(url):

@@ -256,7 +256,7 @@ def getNoticas():
         de ingresos económicos.""",
         "https://rpp.pe/peru/cusco/color-de-piel-y-nivel-de-ingresos-son-algunos-factores-de-discriminacion-en-cusco-noticia-1125800"],
         
-        ["Casos de homofobia","./img/homofobia.webp","""
+        ["Casos de homofobia","./img/homofobia.png","""
         Enrique Alberto Li Gonzales (27) denunció el último domingo haber sido agredido por un sujeto que,
         tras insultarlo por su orientación sexual, le desfiguró el rostro en pleno centro de Miraflores.
         Según relató la víctima, transitaba por la avenida Larco acompañado de un amigo cuando su atacante 
