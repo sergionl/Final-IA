@@ -245,3 +245,80 @@ def verification(numeroPersona,numeroMotivo,numeroLugar,cartasganadoras):
     mensaje="Ganaste"
     return mensaje
     
+def getNoticas():
+    aux=[
+        ["Casos de racismo","./img/racismo.png","""
+        El 29% de ciudadanos cusqueños fue víctima de discriminación en los últimos 12 meses, según la 
+        primera encuesta nacional “Percepciones Sobre Diversidad Cultural y Discriminación Étnico-Racial”, 
+        realizado por el Ministerio de Cultura.
+        De acuerdo a la percepción de los cusqueños, un 26% se siente discriminado por el color de piel, 
+        mientras que el 21% por el lugar de procedencia, el 19% por su forma de hablar y el 18% por el nivel 
+        de ingresos económicos.""",
+        "https://rpp.pe/peru/cusco/color-de-piel-y-nivel-de-ingresos-son-algunos-factores-de-discriminacion-en-cusco-noticia-1125800"],
+        
+        ["Casos de homofobia","./img/homofobia.webp","""
+        Enrique Alberto Li Gonzales (27) denunció el último domingo haber sido agredido por un sujeto que,
+        tras insultarlo por su orientación sexual, le desfiguró el rostro en pleno centro de Miraflores.
+        Según relató la víctima, transitaba por la avenida Larco acompañado de un amigo cuando su atacante 
+        identificado como Juan Carlos Marchena Iparraguirre (24) comenzó a lanzarle insultos homofóbicos.
+        Afectado por la agresión verbal, Li Gonzáles encaró al sujeto y este respondió violentamente causándole
+        un corte en el pómulo izquierdo para posteriormente huir del lugar con un acompañante.""",
+        "https://peru21.pe/lima/caso-de-homofobia-en-miraflores-le-desfiguran-rostro-a-joven-y-acusa-a-los-policias-de-liberar-a-su-atacante-video-noticia/"
+        ],
+        
+        ["Casos de transfobia","./img/transfobia.jpg","""
+         No es un secreto que la comunidad trans en el país es constantemente discriminada y vulnerada en más
+         de un aspecto de sus vidas. La transfobia, el odio y rechazo se suma a la larga lista de vulneraciones 
+         contra sus derechos, bajo la falta de políticas públicas para proteger a esta población.
+         El último 8 de enero, la serie De Vuelta al Barrio, una producción de América Televisión, proyectó una 
+         escena violenta en la que el personaje principal del sketch hacía referencia a mujer trans. Una escena 
+         que posiblemente hubiera pasado desapercibida si no fuera por Gianna Camacho, activista e integrante 
+         del Proyecto Únicxs de la UPCH, quien denunció —a través de sus redes sociales— la transfobia contenida 
+         en el episodio de la serie.""",
+         "https://larepublica.pe/sociedad/2021/01/19/transfobia-en-la-television-peruana-violencia-contra-personas-trans-sigue-presente-atmp/"
+        ],
+        
+        ["Casos de xenofobia","./img/xenofobia.jpg","""
+         A fines de mayo del 2021 aparecieron en algunos sectores de Lima unos afiches con mensajes de odio 
+         que se han convertido en la evidencia más extrema del discurso de la xenofobia en el país. Las láminas 
+         de papel llevaban como titular: ‘Bicentenario sin venecos’, en referencia ofensiva a los migrantes 
+         venezolanos. A eso se sumaban frases de rechazo a una supuesta invasión e incluso abiertas amenazas 
+         de muerte contra los migrantes, a quienes se acusaba de una serie de delitos. “No al robo de nuestros 
+         empleos”, “Soberanía e identidad nacional”, eran algunas de las expresiones colocadas en hilera. 
+        Los mensajes iban acompañados de dos imágenes: a un lado y en posición preponderante, el retrato del 
+        héroe nacional Andrés A. Cáceres; al costado, y algo más abajo, la foto de Silvano Cántaro, un joven 
+        músico peruano que murió tras ser arrojado de un puente en Colombia por supuestos venezolanos, un 
+        crimen que conmocionó a la opinión pública peruana en febrero de este año. 
+         ""","https://ojo-publico.com/2774/mensajes-de-odio-hacia-venezolanos-aumentaron-nueve-veces-en-campana"],
+        
+        ["Casos de sexismo","./img/sexismo.jpg","""
+         En su discurso, el presidente del Consejo de Ministros, Guido Bellido, asegura que este gobierno y 
+         su persona han llegado al poder para traer la igualdad, una frase vacía y falsa pues sus comentarios 
+         machistas y misóginos han puesto en evidencia su verdadero perfil. Antes de asumir el cargo, algunas 
+         frases del premier ya eran conocidas. En Facebook nunca escondió su posición frente a las minorías, 
+         especialmente contra la comunidad LGTB+. Ahora, luego de que la congresista Patricia Chirinos lo 
+         denunciara públicamente por agresión verbal, ha quedado expuesto también su desprecio hacia las 
+         mujeres.
+         El pasaje que fue dado a conocer por la tercera vicepresidenta del Congreso el último lunes, ya 
+         había sido adelantado hace un mes por El Comercio, antes de que Bellido fuera designado como titular 
+         de la PCM. El entonces congresista de Perú Libre le dijo a su par: “Anda, cásate (...), solo falta 
+         que te violen”, cuando esta solicitaba que le asignen la oficina que había pertenecido a su padre 
+         (Enrique Chirinos Soto).
+         ""","https://peru21.pe/politica/gobierno-de-peru-libre-escalada-misogina-y-machista-del-premier-bellido-bajo-la-lupa-noticia/"],
+        
+        ["Casos de discriminacion por discapacidad","./img/discriminacion por discapacidad.jpg","""
+         Un supuesto caso de discriminación denunció madre de familia quien contó que a su niño de tres años 
+         le negaron la matrícula en el Centro Educativo Santa Rosa de Surco.
+         El niño sufre de una malformación de la columna que no le permite caminar con normalidad y lo tiene 
+         que hacer con ayuda de unas muletas.
+
+         Soledad Rocha, madre del menor, dijo que en la referida escuela los responsables le dieron diferentes excusas 
+         para no inscribirlo en el presente año escolar.
+
+         “No es la primera vez que me niegan la inscripción de mi niño. La directora de la institución me recibió al 
+         principio muy cordialmente y me informó que sí tenían vacantes para niños de cinco años, pero al ver las 
+         muletas empezó a titubear", contó a RPP Noticias.
+         ""","https://rpp.pe/lima/actualidad/madre-denuncia-discriminacion-de-su-hijo-discapacitado-en-surco-noticia-772853"]
+    ]
+    
+    return aux

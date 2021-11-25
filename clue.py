@@ -2,10 +2,13 @@ from tkinter import *
 from PIL import ImageTk, Image
 from utils import *
 from tkinter import messagebox
+import webbrowser
 root = Tk()
 kbs=[createKb(),createKb()]
 lcards = cartas() #list cards
 wcards = selectedCartasGanador() #winner cards
+noticias= getNoticas()
+
 available_cards = list()
 available_cards = initial_available_cards()
 
@@ -15,9 +18,11 @@ class Player():
         self.window.geometry("600x300")
         self.title = txt
         self.i=i
+        self.perdiste=False
         self.cards = [(-1, -1) for _ in range(3)]
         self.checked = IntVar()
         self.button=Button()
+        self.nextPlayer=Button()
         Label(self.window, text=self.title).pack()
         self.entry = Entry(self.window, borderwidth=2)
         self.show = Checkbutton(self.window, text="Mostrar cartas", variable=self.checked, command=self.showcards)
@@ -66,9 +71,8 @@ class Player():
         kbs[self.i] = changeValue(kbs[self.i],card,False)
         
         available_cards = quit_some_availablecards(available_cards, [card])
-
         self.showcards()
-        self.buttonpick['state'] = DISABLED
+        setPickCard(self.i)
 
     def acusar(self):
         global new_img
@@ -115,12 +119,99 @@ class Player():
             
             messagebox.showinfo("anuncio",mensaje)
             if mensaje== "Ganaste":
-                root.destroy()
+                i=numeroMotivo[1]
+                noticia(i)
+
+            else:
+                self.perdiste=True
+                ventanaAcusar.destroy()
+                fin_del_juego(False)
+                nextPlayer(self.i)
+                
             return
+            
         Button(ventanaAcusar, text="Enviar",command=acusacion).pack()
         Button(ventanaAcusar, text="Retroceder",command=ventanaAcusar.destroy).pack()
-        
+
+        Button()
         return
+
+def setPickCard(i):
+    global player0,player1
+    if i==0:
+        if player1.perdiste==True:
+            player0.buttonpick['state']=NORMAL
+            return
+        else:
+            player0.buttonpick['state']=DISABLED
+    elif i==1:
+        if player0.perdiste==True:
+            player1.buttonpick['state']=NORMAL
+            return
+        else:
+            player1.buttonpick['state']=DISABLED
+            
+    
+def nextPlayer(i):
+    global player0,player1
+    
+    if i==0:
+        if player0.perdiste==True:
+            player1.nextPlayer['state']=DISABLED
+        if player1.perdiste==True:
+            player1.window.withdraw()
+            player0.window.deiconify()
+            return    
+        player1.window.deiconify()
+        player0.window.withdraw()
+    else:
+        if player1.perdiste==True:
+            player0.nextPlayer['state']=DISABLED
+        if player0.perdiste==True:
+            player0.window.withdraw()
+            player1.window.deiconify()
+            return
+        player0.window.deiconify()
+        player1.window.withdraw()
+    
+        
+def noticia(i):
+    titulo=noticias[i][0]
+    img=noticias[i][1]
+    descripcion=noticias[i][2]
+    link=noticias[i][3]
+    
+    ventananoticia=Toplevel()
+    ventananoticia.title("Noticia")
+    ventananoticia.geometry("600x500")
+    Label(ventananoticia,text=titulo).pack()
+    
+    global new_img
+    canva = Canvas(ventananoticia, width=400, height=200)
+    canva.pack()
+    my_img = (Image.open(img))
+    resized_img = my_img.resize((400, 200), Image.ANTIALIAS)
+    new_img = ImageTk.PhotoImage(resized_img)
+    canva.create_image(10, 10, anchor=NW, image=new_img)
+    
+    Label(ventananoticia,text=descripcion).pack()
+    def callback(url):
+        webbrowser.open_new(url)
+            
+    link1 = Label(ventananoticia, text="Link a la noticia", fg="blue", cursor="hand2")
+    link1.pack()
+    link1.bind("<Button-1>", lambda e: callback(link))
+    clickButton=Button(ventananoticia,text="cerrar juego",command=lambda:fin_del_juego(True))  
+    clickButton.pack() 
+    return
+
+def fin_del_juego(var):
+    global player0, player1
+    if var==True:
+        root.destroy()
+    elif player0.perdiste==True and player1.perdiste==True:
+        messagebox.showinfo("Fin del juego","Nadie gano")
+        root.destroy()
     
 def play(pregunta:Player,respuesta:Player,i):
     texto=pregunta.entry.get()
@@ -130,18 +221,21 @@ def play(pregunta:Player,respuesta:Player,i):
         
         return
     kbs[i],mensaje=question(kbs[i],numero[0],numero[1],respuesta.cards)
-    pregunta.button['state'] = DISABLED
+    if respuesta.perdiste==True:
+        pregunta.button['state'] = NORMAL
+    else:
+        pregunta.button['state'] = DISABLED
     messagebox.showinfo("Base de conocimiento",mensaje)       
     return 
-def showAnotherplayer(window1: Toplevel, window2: Toplevel, player: Player):
-    window1.withdraw()
-    window2.deiconify()
+def showAnotherplayer(window1: Toplevel, window2: Toplevel, player: Player,anotherplayer: Player):
+    if anotherplayer.perdiste==True:return
+    nextPlayer(player.i)
 
     player.buttonpick['state'] = NORMAL
     player.button['state'] = NORMAL
 
 def start():
-    global root, available_cards, wcards
+    global root, available_cards, wcards,player0,player1
     root.withdraw()
     player0 = Player("Jugador 1",0)
     player1 = Player("Jugador 2",1)    
@@ -149,13 +243,16 @@ def start():
     player0.selectInitialCards(player1.cards, 0)
     player1.selectInitialCards(player0.cards, 1)
 
-    Button(player0.window, text="Enviar", command= lambda:play(player0,player1,0)).pack()
-    Button(player0.window, text="El siguiente jugador", 
-    command=lambda: showAnotherplayer(player0.window, player1.window, player0)).pack()
-    Button(player1.window, text="Enviar", command= lambda:play(player1,player0,1)).pack()
-    Button(player1.window, text="El siguiente jugador", 
-    command=lambda: showAnotherplayer(player1.window, player0.window, player1)).pack()
-
+    player0.button=Button(player0.window, text="Enviar", command= lambda:play(player0,player1,0))
+    player0.button.pack()
+    player0.nextPlayer=Button(player0.window, text="El siguiente jugador", 
+    command=lambda: showAnotherplayer(player0.window, player1.window, player0,player1))
+    player0.nextPlayer.pack()
+    player1.button=Button(player1.window, text="Enviar", command= lambda:play(player1,player0,1))
+    player1.button.pack()
+    player1.nextPlayer=Button(player1.window, text="El siguiente jugador", 
+    command=lambda: showAnotherplayer(player1.window, player0.window, player1,player0))
+    player1.nextPlayer.pack()
     player1.window.withdraw()
 
     available_cards = quit_some_availablecards(available_cards, player0.cards)
