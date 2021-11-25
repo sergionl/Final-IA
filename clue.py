@@ -15,7 +15,7 @@ available_cards = initial_available_cards()
 class Player():
     def __init__(self, txt,i):
         self.window = Toplevel()
-        self.window.geometry("600x300")
+        self.window.geometry("600x500")
         self.title = txt
         self.i=i
         self.perdiste=False
@@ -150,8 +150,7 @@ def setPickCard(i):
             return
         else:
             player1.buttonpick['state']=DISABLED
-            
-    
+               
 def nextPlayer(i):
     global player0,player1
     
@@ -235,7 +234,7 @@ def showAnotherplayer(window1: Toplevel, window2: Toplevel, player: Player,anoth
     player.button['state'] = NORMAL
 
 def start():
-    global root, available_cards, wcards,player0,player1
+    global root, available_cards, wcards,player0,player1, new_img
     root.withdraw()
     player0 = Player("Jugador 1",0)
     player1 = Player("Jugador 2",1)    
@@ -255,13 +254,24 @@ def start():
     player1.nextPlayer.pack()
     player1.window.withdraw()
 
+    canva = Canvas(player0.window, width=600, height=100)
+    canva.pack()
+    my_img = (Image.open("./img/cartas.png"))
+    resized_img = my_img.resize((600, 100), Image.ANTIALIAS)
+    new_img = ImageTk.PhotoImage(resized_img)
+    canva.create_image(10, 10, anchor=NW, image=new_img)
+
+    canva = Canvas(player1.window, width=600, height=100)
+    canva.pack()
+    canva.create_image(10, 10, anchor=NW, image=new_img)
+
     available_cards = quit_some_availablecards(available_cards, player0.cards)
     available_cards = quit_some_availablecards(available_cards, player1.cards)
     available_cards = quit_some_availablecards(available_cards, wcards)
 
 
 def instructions():
-    global new_img
+    global new_img, new_img2
 
     root.title("TF-Cluedo")
     lbl = Label(root, text="Cluedo", border=3, padx=5, pady=5)
@@ -285,6 +295,13 @@ def instructions():
     "4) Deberás encontrar las cartas escondidas", justify="left", padx=10, pady=5)
     lbl.pack()
     lbl.config(font=("Verdana", 10))
+
+    canva = Canvas(root, width=600, height=100)
+    canva.pack()
+    my_img = (Image.open("./img/cartas.png"))
+    resized_img = my_img.resize((600, 100), Image.ANTIALIAS)
+    new_img2 = ImageTk.PhotoImage(resized_img)
+    canva.create_image(10, 10, anchor=NW, image=new_img2)
 
     Button(root, text="Comenzar (>)", bg="green", fg="black", pady=10, command=start).pack()
 
